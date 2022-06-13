@@ -111,7 +111,6 @@ int wmain(int argc, wchar_t* argv[])
 					}
 					else if(WSupplies::IsOfType(pSuppliesLink))
 					{
-						WSupplies* pSupplies = NULL;
 						WSupplies::Open(&pSupplies, *pSuppliesLink, pDomain);
 
 						if(FAILED(pDomain->Execute(Transaction::Load)))
@@ -121,7 +120,6 @@ int wmain(int argc, wchar_t* argv[])
 							return -1;
 						}
 
-						WInventory* pInventory;
 						WInventory::Extend(&pInventory, pSupplies);
 
 						pDomain->InsertNamedObject(&pInventory->BuildLink(true), &guidEntryPoint, L"updated entry point");

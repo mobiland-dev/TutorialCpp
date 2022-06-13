@@ -35,10 +35,10 @@ void readObjectList(WInventory* pInventory)
 				const wchar_t* strArticleName;
 				apArticle[i]->GetArticleName(&strArticleName);
 
-				UINT16 ui16Amount = NULL;
-				apArticle[i]->GetCount(&ui16Amount);
+				UINT16 usCount;
+				apArticle[i]->GetCount(&usCount);
 
-				wprintf(L"LinkIndex: %i || Article:: %6lux %s\n", i, ui16Amount, strArticleName);
+				wprintf(L"LinkIndex: %i || Article: %ix %s\n", i, usCount, strArticleName);
 			}
 		}
 

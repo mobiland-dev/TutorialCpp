@@ -10,7 +10,7 @@ void modifyObjectInList(WInventory* pInventory)
 	HRESULT hRes;
 
 	const ArticleList* pList;
-	if(S_OK == (hRes = pInventory->GetItems(&pList)))
+	if(S_OK != (hRes = pInventory->GetItems(&pList)))
 	{
 		wprintf(L"Cannot read article list (0x%x)\n", hRes);
 		return;
