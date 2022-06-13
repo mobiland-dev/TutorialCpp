@@ -1,0 +1,16 @@
+
+namespace Tutorial
+{
+	class Supplies [id({5E494623-5D2F-4774-880D-8BA7DAE2D0CC})]
+	{
+		wstring  Description;
+		datetime LastUpdated;
+		ShopList Shops;
+	};
+
+	list ShopList [id({CB1192D6-2497-425D-B8F2-C831B00DD9FB})]
+	{
+		wstring ShopName;
+		wstring ShopURL;
+	};
+}

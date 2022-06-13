@@ -1,0 +1,51 @@
+#import <DataDefinition.bdtd>
+#import <DataDefinitionEx.bdtd>
+
+object WSupplies
+{
+	Tutorial::Supplies
+	{
+		Description	[get, set, remove];
+		LastUpdated	[get, set];
+		Shops		[get, set, remove];
+	}
+};
+
+object WInventory
+{
+	Tutorial::Supplies
+	{
+		Description	[get, set, remove];
+		LastUpdated	[get, set];
+		Shops		[get, set, remove];
+	}
+
+	Tutorial::Inventory
+	{
+		Responsible	[link(WResponsible), open(WResponsible)];
+		Items		[get, set, remove];
+	}
+};
+
+object WResponsible
+{
+	Tutorial::Responsible
+	{
+		FullName	[get, set];
+		Comment		[get, set];
+	}
+};
+
+object WShopArticle
+{
+	Tutorial::ShopArticle
+	{
+		ArticleName [get, set, remove];
+		Count		[get, set];
+	}
+};
+
+list ArticleList Tutorial::ArticleList
+{
+	ShopArticle		[link(WShopArticle)];
+};

@@ -1,0 +1,26 @@
+
+namespace Tutorial
+{
+	class Inventory [id({FE438523-E2A1-48e6-A0C6-3A88B67A8FFF})]
+	{
+		object      Responsible;
+		ArticleList Items;
+	};
+
+	class Responsible [id({525372A2-EEBE-40A5-90D5-C7BC63FDC8D2})]
+	{
+		wstring FullName;
+		wstring Comment;
+	};
+
+	class ShopArticle [id({AD643CA4-995D-42b5-9E31-A8482DD7B484})]
+	{
+		wstring ArticleName;
+		uint16  Count;
+	};
+
+	list ArticleList [id({FA28CAE4-B97B-4783-85D2-1F746FA900E9}), ck]
+	{
+		object ShopArticle;
+	};
+}
