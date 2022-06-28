@@ -15,7 +15,7 @@ void readObjectList(WInventory* pInventory)
 			pList->Get(i, &pItem);
 
 			// Open
-			WShopArticle::Open(&apArticle[i], pItem->olShopArticle, pInventory);
+			WShopArticle::Open(&apArticle[i], pItem->olArticle, pInventory);
 
 			// Load
 			apArticle[i]->Load();

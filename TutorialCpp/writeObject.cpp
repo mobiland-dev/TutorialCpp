@@ -19,7 +19,7 @@ void writeObject(WInventory* pInventory)
 	pResponsible->SetComment(input2.c_str());
 
 	// set objectlink
-	pInventory->LinkResponsible(pResponsible);
+	pInventory->LinkManager(pResponsible);
 
 	// Store
 	pResponsible->Store();	// new object

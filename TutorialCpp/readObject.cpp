@@ -6,7 +6,7 @@ void readObject(WInventory* pInventory)
 
 	// Open
 	WResponsible* pResponsible;
-	if(S_OK == (hRes = pInventory->OpenResponsible(&pResponsible)))
+	if(S_OK == (hRes = pInventory->OpenManager(&pResponsible)))
 	{
 		// Load
 		pResponsible->Load();

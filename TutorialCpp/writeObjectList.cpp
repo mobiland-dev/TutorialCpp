@@ -7,14 +7,14 @@ void writeObjectList(WInventory* pInventory)
 	WShopArticle::Create(&pShopArticle, pInventory);
 
 	// ArticleName
-	std::wstring input1;
 	wprintf(L"Article name:  \n");
+	std::wstring input1;
 	getline(std::wcin, input1);
 	pShopArticle->SetArticleName(input1.c_str());
 
 	// Count
-	std::wstring input2;
 	wprintf(L"Count: \n");
+	std::wstring input2;
 	getline(std::wcin, input2);
 	pShopArticle->SetCount((UINT16)_wtoi(input2.c_str()));
 
@@ -23,7 +23,7 @@ void writeObjectList(WInventory* pInventory)
 	pInventory->SetItems(&pArticleList);
 
 	ArticleListItem Item;
-	Item.olShopArticle = pShopArticle;
+	Item.olArticle = pShopArticle;
 
 	pArticleList->Insert(NULL, &Item);
 

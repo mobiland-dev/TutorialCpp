@@ -3,9 +3,9 @@
 void writeAttributes(WSupplies* pSupplies)
 {
 	// Description
-	std::wstring input;
 	wprintf(L"Supplies description:\n");
-	std::wcin >> input;
+	std::wstring input;
+	std::getline(std::wcin, input);
 	pSupplies->SetDescription(input.c_str());
 
 	// LastUpdated

@@ -44,8 +44,10 @@ int wmain(int argc, wchar_t* argv[])
 
 	do
 	{
-		wprintf(L"\n 1: create new Supplies object\n 2: open existing Supplies object\n\n 3: create new Inventory object\n 4: extend Supplies object to Inventory object\n 5: open existing Inventory object\n\nselect action: ");
+		wprintf(L"\nselect function:\n  1: create new Supplies object\n  2: open existing Supplies object\n\n  3: create new Inventory object\n  4: extend Supplies object to Inventory object\n  5: open existing Inventory object\n");
+
 		action = _getch();
+		wprintf(L"\n");
 
 		switch(action)
 		{
@@ -54,6 +56,19 @@ int wmain(int argc, wchar_t* argv[])
 				WSupplies::Create(&pSupplies, pDomain);
 
 				pDomain->InsertNamedObject(&pSupplies->BuildLink(true), &guidEntryPoint, L"basic entry point");
+
+				// Store
+				pSupplies->Store();
+
+				// Execute
+				HRESULT hRes;
+				if(FAILED(hRes = pDomain->Execute(Transaction::Store)))
+				{
+					wprintf(L"Domain failed to execute the transaction (0x%x)\n", hRes);
+
+					pSupplies->Release();
+					pSupplies = NULL;
+				}
 			}
 			break;
 
@@ -95,6 +110,22 @@ int wmain(int argc, wchar_t* argv[])
 				pDomain->InsertNamedObject(&pInventory->BuildLink(true), &guidEntryPoint, L"extended entry point");
 
 				pSupplies = WSupplies::CastTo(pInventory);
+				pInventory->AddRef();
+
+				// Store
+				pInventory->Store();
+
+				// Execute
+				HRESULT hRes;
+				if(FAILED(hRes = pDomain->Execute(Transaction::Store)))
+				{
+					wprintf(L"Domain failed to execute the transaction (0x%x)\n", hRes);
+
+					pInventory->Release();
+					pInventory = NULL;
+					pSupplies->Release();
+					pSupplies = NULL;
+				}
 			}
 			break;
 
@@ -112,6 +143,7 @@ int wmain(int argc, wchar_t* argv[])
 					else if(WSupplies::IsOfType(pSuppliesLink))
 					{
 						WSupplies::Open(&pSupplies, *pSuppliesLink, pDomain);
+						pSupplies->Load();
 
 						if(FAILED(pDomain->Execute(Transaction::Load)))
 						{
@@ -121,8 +153,24 @@ int wmain(int argc, wchar_t* argv[])
 						}
 
 						WInventory::Extend(&pInventory, pSupplies);
+						pInventory->AddRef();
 
 						pDomain->InsertNamedObject(&pInventory->BuildLink(true), &guidEntryPoint, L"updated entry point");
+
+						// Store
+						pInventory->Store();
+
+						// Execute
+						HRESULT hRes;
+						if(FAILED(hRes = pDomain->Execute(Transaction::Store)))
+						{
+							wprintf(L"Domain failed to execute the transaction (0x%x)\n", hRes);
+
+							pInventory->Release();
+							pInventory = NULL;
+							pSupplies->Release();
+							pSupplies = NULL;
+						}
 					}
 					else
 					{
@@ -156,6 +204,7 @@ int wmain(int argc, wchar_t* argv[])
 						}
 
 						pSupplies = WSupplies::CastTo(pInventory);
+						pInventory->AddRef();
 					}
 					else if(WSupplies::IsOfType(pInventoryLink))
 					{
@@ -180,8 +229,19 @@ int wmain(int argc, wchar_t* argv[])
 
 	do
 	{
-		wprintf(L"select function:\n  1: writeAttributes\n  2: readAttribute\n  3: writeList\n  4: readList\n  5: writeObject\n  6: readObject\n  7: writeObjectList\n  8: readObjectList\n  9: modifyObjectInList\n  q: quit\n");
+		if(!pInventory)
+			wprintf(L"\nselect function:\n  1: writeAttributes\n  2: readAttribute\n  3: writeList\n  4: readList\n  q: quit\n");
+		else
+			wprintf(L"\nselect function:\n  1: writeAttributes\n  2: readAttribute\n  3: writeList\n  4: readList\n  5: writeObject\n  6: readObject\n  7: writeObjectList\n  8: readObjectList\n  9: modifyObjectInList\n  q: quit\n");
+
 		action = _getch();
+		wprintf(L"\n");
+
+		if(!pInventory)
+		{
+			if((action >= '5') && (action <= '9'))
+				action = 0;
+		}
 
 		switch(action)
 		{

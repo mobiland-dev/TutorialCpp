@@ -22,7 +22,7 @@ object WInventory
 
 	Tutorial::Inventory
 	{
-		Responsible	[link(WResponsible), open(WResponsible)];
+		Manager		[link(WResponsible), open(WResponsible)];
 		Items		[get, set, remove];
 	}
 };
@@ -47,5 +47,5 @@ object WShopArticle
 
 list ArticleList Tutorial::ArticleList
 {
-	ShopArticle		[link(WShopArticle)];
+	Article			[link(WShopArticle)];
 };

@@ -3,7 +3,7 @@ namespace Tutorial
 {
 	class Inventory [id({FE438523-E2A1-48e6-A0C6-3A88B67A8FFF})]
 	{
-		object      Responsible;
+		object      Manager;
 		ArticleList Items;
 	};
 
@@ -21,6 +21,6 @@ namespace Tutorial
 
 	list ArticleList [id({FA28CAE4-B97B-4783-85D2-1F746FA900E9}), ck]
 	{
-		object ShopArticle;
+		object Article;
 	};
 }

@@ -2,8 +2,8 @@
 
 void modifyObjectInList(WInventory* pInventory)
 {
-	std::wstring input0;
 	wprintf(L"List index: \n");
+	std::wstring input0;
 	getline(std::wcin, input0);
 	UINT32 indexInput = ((UINT32)_wtoi(input0.c_str()));
 
@@ -24,7 +24,7 @@ void modifyObjectInList(WInventory* pInventory)
 	}
 
 	WShopArticle* pArticle;
-	WShopArticle::Open(&pArticle, pOldItem->olShopArticle, pInventory);
+	WShopArticle::Open(&pArticle, pOldItem->olArticle, pInventory);
 
 	// Load
 	pArticle->Load();
@@ -36,14 +36,14 @@ void modifyObjectInList(WInventory* pInventory)
 	}
 	else
 	{
-		std::wstring input1;
 		wprintf(L"Article name: \n");
+		std::wstring input1;
 		getline(std::wcin, input1);
 		if(input1.length() > 0)
 			pArticle->SetArticleName(input1.c_str());
 
-		std::wstring input2;
 		wprintf(L"Count: \n");
+		std::wstring input2;
 		getline(std::wcin, input2);
 		if(input2.length() > 0)
 			pArticle->SetCount((UINT16)_wtoi(input2.c_str()));
