@@ -24,13 +24,13 @@ void modifyObjectInList(WInventory* pInventory)
 	}
 
 	WShopArticle* pArticle;
-	WShopArticle::Open(&pArticle, pOldItem->olArticle, pInventory);
+	WShopArticle::Open(&pArticle, pInventory->GetObject(), pOldItem->olArticle);
 
 	// Load
 	pArticle->Load();
 
 	// Execute
-	if(FAILED(hRes = pInventory->GetDomain()->Execute(Transaction::Load)))
+	if(FAILED(hRes = pInventory->GetDomain()->Execute(Transaction::Load, NULL)))
 	{
 		wprintf(L"Domain failed to execute the transaction (0x%x)\n", hRes);
 	}
@@ -52,7 +52,7 @@ void modifyObjectInList(WInventory* pInventory)
 		pArticle->Store();
 
 		// Execute
-		if(FAILED(hRes = pInventory->GetDomain()->Execute(Transaction::Store)))
+		if(FAILED(hRes = pInventory->GetDomain()->Execute(Transaction::Store, NULL)))
 		{
 			wprintf(L"Domain failed to execute the transaction (0x%x)", hRes);
 		}

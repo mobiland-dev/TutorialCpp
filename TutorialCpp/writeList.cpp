@@ -27,7 +27,7 @@ void writeList(WSupplies* pSupplies)
 
 	// Execute
 	HRESULT hRes;
-	if(FAILED(hRes = pSupplies->GetDomain()->Execute(Transaction::Store)))
+	if(FAILED(hRes = pSupplies->GetDomain()->Execute(Transaction::Store, NULL)))
 	{
 		wprintf(L"Domain failed to execute the transaction (0x%x)", hRes);
 	}

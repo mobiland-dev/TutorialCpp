@@ -6,13 +6,13 @@ void readObject(WInventory* pInventory)
 
 	// Open
 	WResponsible* pResponsible;
-	if(S_OK == (hRes = pInventory->OpenManager(&pResponsible)))
+	if(S_OK == (hRes = pInventory->OpenManager(&pResponsible, 0)))
 	{
 		// Load
 		pResponsible->Load();
 
 		// Execute
-		if(FAILED(hRes = pResponsible->GetDomain()->Execute(Transaction::Load)))
+		if(FAILED(hRes = pResponsible->GetDomain()->Execute(Transaction::Load, NULL)))
 		{
 			wprintf(L"Domain failed to execute the transaction (0x%x)\n", hRes);
 		}

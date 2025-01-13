@@ -15,14 +15,14 @@ void readObjectList(WInventory* pInventory)
 			pList->Get(i, &pItem);
 
 			// Open
-			WShopArticle::Open(&apArticle[i], pItem->olArticle, pInventory);
+			WShopArticle::Open(&apArticle[i], pInventory->GetObject(), pItem->olArticle);
 
 			// Load
 			apArticle[i]->Load();
 		}
 
 		// Execute
-		if(FAILED(hRes = pInventory->GetDomain()->Execute(Transaction::Load)))
+		if(FAILED(hRes = pInventory->GetDomain()->Execute(Transaction::Load, NULL)))
 		{
 			wprintf(L"Domain failed to execute the transaction (0x%x)\n", hRes);
 		}

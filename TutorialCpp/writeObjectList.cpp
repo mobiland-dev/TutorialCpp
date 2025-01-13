@@ -4,7 +4,7 @@ void writeObjectList(WInventory* pInventory)
 {
 	// create object
 	WShopArticle* pShopArticle;
-	WShopArticle::Create(&pShopArticle, pInventory);
+	WShopArticle::Create(&pShopArticle, pInventory->GetObject());
 
 	// ArticleName
 	wprintf(L"Article name:  \n");
@@ -33,7 +33,7 @@ void writeObjectList(WInventory* pInventory)
 
 	// Execute
 	HRESULT hRes;
-	if(FAILED(hRes = pInventory->GetDomain()->Execute(Transaction::Store)))
+	if(FAILED(hRes = pInventory->GetDomain()->Execute(Transaction::Store, NULL)))
 	{
 		wprintf(L"Domain failed to execute the transaction (0x%x)", hRes);
 	}

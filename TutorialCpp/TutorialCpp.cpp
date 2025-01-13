@@ -3,8 +3,8 @@
 const GUID guidEntryPoint
 { 0x71e456a5, 0x6a4e, 0x46aa, { 0xa7, 0x27, 0x10, 0x5d, 0x58, 0x4c, 0x79, 0x17 } };
 
-HRESULT	init				(WDomain*& pDomain, const wchar_t* strServerAddress, UINT16 usServerPort, const GUID& guidDomainId, UINT32 ulStorageId);
-void	uninit				(WDomain*& pDomain, UINT32 ulStorageId);
+HRESULT	init				(Connection*& pConnection, WDomain*& pDomain, const wchar_t* strServerAddress, UINT16 usServerPort, const GUID& guidDomainId, UINT32 ulStorageId);
+void	uninit				(Connection*& pConnection, WDomain*& pDomain, UINT32 ulStorageId);
 
 void	writeAttributes		(WSupplies* pSupplies);
 void	readAttributes		(WSupplies* pSupplies);
@@ -30,9 +30,10 @@ int wmain(int argc, wchar_t* argv[])
 	// Storage-ID (we are using the default 0 here)
 	UINT32 ulStorageId = 0;
 
+	Connection* pConnection;
 	WDomain* pDomain;
 
-	if(S_OK != init(pDomain, strServerAddress, usServerPort, guidDomainId, ulStorageId))
+	if(S_OK != init(pConnection, pDomain, strServerAddress, usServerPort, guidDomainId, ulStorageId))
 	{
 		printf("init failed\n");
 		return -1;
@@ -53,16 +54,16 @@ int wmain(int argc, wchar_t* argv[])
 		{
 		case '1':
 			{
-				WSupplies::Create(&pSupplies, pDomain);
+				WSupplies::Create(&pSupplies, pDomain, &DataFS::OBJECTID_NULL);
 
-				pDomain->InsertNamedObject(&pSupplies->BuildLink(true), &guidEntryPoint, L"basic entry point");
+				pDomain->InsertNamedLink(&pSupplies->BuildLink(true), &guidEntryPoint, L"basic entry point");
 
 				// Store
 				pSupplies->Store();
 
 				// Execute
 				HRESULT hRes;
-				if(FAILED(hRes = pDomain->Execute(Transaction::Store)))
+				if(FAILED(hRes = pDomain->Execute(Transaction::Store, NULL)))
 				{
 					wprintf(L"Domain failed to execute the transaction (0x%x)\n", hRes);
 
@@ -74,26 +75,26 @@ int wmain(int argc, wchar_t* argv[])
 
 		case '2':
 			{
-				DataFoundation::stcObjectLink* pSuppliesLink;
-				if(S_OK == pDomain->QueryNamedObjectLink(&guidEntryPoint, 1, &pSuppliesLink))
+				DataFS::stcObjectLink* pSuppliesLink;
+				if(S_OK == pDomain->QueryNamedLink(&guidEntryPoint, 1, &pSuppliesLink, NULL))
 				{
 					if(WSupplies::IsOfType(pSuppliesLink))
 					{
-						WSupplies::Open(&pSupplies, *pSuppliesLink, pDomain);
+						WSupplies::Open(&pSupplies, pDomain, *pSuppliesLink);
 						pSupplies->Load();
 
-						DataFoundationAccess::MemFree(pSuppliesLink);
+						DataFSAccess::MemFree(pSuppliesLink);
 
-						if(FAILED(pDomain->Execute(Transaction::Load)))
+						if(FAILED(pDomain->Execute(Transaction::Load, NULL)))
 						{
 							wprintf(L"Execute failed...\n");
-							uninit(pDomain, ulStorageId);
+							uninit(pConnection, pDomain, ulStorageId);
 							return -1;
 						}
 					}
 					else
 					{
-						DataFoundationAccess::MemFree(pSuppliesLink);
+						DataFSAccess::MemFree(pSuppliesLink);
 
 						wprintf(L"Object is not of type WSupplies\n");
 					}
@@ -105,24 +106,21 @@ int wmain(int argc, wchar_t* argv[])
 
 		case '3':
 			{
-				WInventory::Create(&pInventory, pDomain);
+				WInventory::Create(&pInventory, pDomain, &DataFS::OBJECTID_NULL);
 
-				pDomain->InsertNamedObject(&pInventory->BuildLink(true), &guidEntryPoint, L"extended entry point");
+				pDomain->InsertNamedLink(&pInventory->BuildLink(true), &guidEntryPoint, L"extended entry point");
 
-				pSupplies = WSupplies::CastTo(pInventory);
-				pInventory->AddRef();
+				pSupplies = WSupplies::CastTo(pInventory->GetObject());
 
 				// Store
 				pInventory->Store();
 
 				// Execute
 				HRESULT hRes;
-				if(FAILED(hRes = pDomain->Execute(Transaction::Store)))
+				if(FAILED(hRes = pDomain->Execute(Transaction::Store, NULL)))
 				{
 					wprintf(L"Domain failed to execute the transaction (0x%x)\n", hRes);
 
-					pInventory->Release();
-					pInventory = NULL;
 					pSupplies->Release();
 					pSupplies = NULL;
 				}
@@ -131,50 +129,47 @@ int wmain(int argc, wchar_t* argv[])
 
 		case '4':
 			{
-				DataFoundation::stcObjectLink* pSuppliesLink;
-				if(S_OK == pDomain->QueryNamedObjectLink(&guidEntryPoint, 1, &pSuppliesLink))
+				DataFS::stcObjectLink* pSuppliesLink;
+				if(S_OK == pDomain->QueryNamedLink(&guidEntryPoint, 1, &pSuppliesLink, NULL))
 				{
 					if(WInventory::IsOfType(pSuppliesLink))
 					{
-						DataFoundationAccess::MemFree(pSuppliesLink);
+						DataFSAccess::MemFree(pSuppliesLink);
 
 						wprintf(L"Object is already of type WInventory\n");
 					}
 					else if(WSupplies::IsOfType(pSuppliesLink))
 					{
-						WSupplies::Open(&pSupplies, *pSuppliesLink, pDomain);
+						WSupplies::Open(&pSupplies, pDomain, *pSuppliesLink);
 						pSupplies->Load();
 
-						if(FAILED(pDomain->Execute(Transaction::Load)))
+						if(FAILED(pDomain->Execute(Transaction::Load, NULL)))
 						{
 							wprintf(L"Execute failed...\n");
-							uninit(pDomain, ulStorageId);
+							uninit(pConnection, pDomain, ulStorageId);
 							return -1;
 						}
 
-						WInventory::Extend(&pInventory, pSupplies);
-						pInventory->AddRef();
+						WInventory::Extend(&pInventory, pSupplies->GetObject());
 
-						pDomain->InsertNamedObject(&pInventory->BuildLink(true), &guidEntryPoint, L"updated entry point");
+						pDomain->InsertNamedLink(&pInventory->BuildLink(true), &guidEntryPoint, L"updated entry point");
 
 						// Store
 						pInventory->Store();
 
 						// Execute
 						HRESULT hRes;
-						if(FAILED(hRes = pDomain->Execute(Transaction::Store)))
+						if(FAILED(hRes = pDomain->Execute(Transaction::Store, NULL)))
 						{
 							wprintf(L"Domain failed to execute the transaction (0x%x)\n", hRes);
 
-							pInventory->Release();
-							pInventory = NULL;
 							pSupplies->Release();
 							pSupplies = NULL;
 						}
 					}
 					else
 					{
-						DataFoundationAccess::MemFree(pSuppliesLink);
+						DataFSAccess::MemFree(pSuppliesLink);
 
 						wprintf(L"Object is not of type WSupplies\n");
 					}
@@ -186,35 +181,34 @@ int wmain(int argc, wchar_t* argv[])
 
 		case '5':
 			{
-				DataFoundation::stcObjectLink* pInventoryLink;
-				if(S_OK == pDomain->QueryNamedObjectLink(&guidEntryPoint, 1, &pInventoryLink))
+				DataFS::stcObjectLink* pInventoryLink;
+				if(S_OK == pDomain->QueryNamedLink(&guidEntryPoint, 1, &pInventoryLink, NULL))
 				{
 					if(WInventory::IsOfType(pInventoryLink))
 					{
-						WInventory::Open(&pInventory, *pInventoryLink, pDomain);
+						WInventory::Open(&pInventory, pDomain, *pInventoryLink);
 						pInventory->Load();
 
-						DataFoundationAccess::MemFree(pInventoryLink);
+						DataFSAccess::MemFree(pInventoryLink);
 
-						if(FAILED(pDomain->Execute(Transaction::Load)))
+						if(FAILED(pDomain->Execute(Transaction::Load, NULL)))
 						{
 							wprintf(L"Execute failed...\n");
-							uninit(pDomain, ulStorageId);
+							uninit(pConnection, pDomain, ulStorageId);
 							return -1;
 						}
 
-						pSupplies = WSupplies::CastTo(pInventory);
-						pInventory->AddRef();
+						pSupplies = WSupplies::CastTo(pInventory->GetObject());
 					}
 					else if(WSupplies::IsOfType(pInventoryLink))
 					{
-						DataFoundationAccess::MemFree(pInventoryLink);
+						DataFSAccess::MemFree(pInventoryLink);
 
 						wprintf(L"Object is not of type WInventory but of type WSupplies\n");
 					}
 					else
 					{
-						DataFoundationAccess::MemFree(pInventoryLink);
+						DataFSAccess::MemFree(pInventoryLink);
 
 						wprintf(L"Object is not of type WInventory\n");
 					}
@@ -304,7 +298,7 @@ int wmain(int argc, wchar_t* argv[])
 	if(pInventory)
 		pInventory->Release();
 
-	uninit(pDomain, ulStorageId);
+	uninit(pConnection, pDomain, ulStorageId);
 
 	return 0;
 }

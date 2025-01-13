@@ -4,7 +4,7 @@ void writeObject(WInventory* pInventory)
 {
 	// create object
 	WResponsible* pResponsible;
-	WResponsible::Create(&pResponsible, pInventory);
+	WResponsible::Create(&pResponsible, pInventory->GetObject());
 
 	// FullName
 	wprintf(L"Full name:\n");
@@ -27,7 +27,7 @@ void writeObject(WInventory* pInventory)
 
 	// Execute
 	HRESULT hRes;
-	if(FAILED(hRes = pInventory->GetDomain()->Execute(Transaction::Store)))
+	if(FAILED(hRes = pInventory->GetDomain()->Execute(Transaction::Store, NULL)))
 	{
 		wprintf(L"Domain failed to execute the transaction (0x%x)", hRes);
 	}
