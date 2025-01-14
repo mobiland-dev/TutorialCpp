@@ -165,7 +165,7 @@
     <ClCompile Include="readList.cpp" />
     <ClCompile Include="readObject.cpp" />
     <ClCompile Include="readObjectList.cpp" />
-    <ClCompile Include="TutorialCpp.cpp" />
+    <ClCompile Include="Tutorial.cpp" />
     <ClCompile Include="uninit.cpp" />
     <ClCompile Include="writeAttributes.cpp" />
     <ClCompile Include="writeList.cpp" />

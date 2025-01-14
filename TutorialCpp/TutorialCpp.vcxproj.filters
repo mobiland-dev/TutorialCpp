@@ -19,7 +19,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TutorialCpp.cpp">
+    <ClCompile Include="Tutorial.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
