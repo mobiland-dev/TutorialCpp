@@ -1,7 +1,9 @@
 #include "pch.h"
 
-void uninit(Connection*& pConnection, WDomain*& pDomain, UINT32 ulStorageId)
+void uninit(WDomain*& pDomain, UINT32 ulStorageId)
 {
+	Connection* pConnection = pDomain->GetConnection();
+
 	// unbind from schema
 	AccessDefinition::Unbind();
 

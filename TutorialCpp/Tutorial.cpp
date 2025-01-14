@@ -3,8 +3,8 @@
 const GUID guidEntryPoint
 { 0x71e456a5, 0x6a4e, 0x46aa, { 0xa7, 0x27, 0x10, 0x5d, 0x58, 0x4c, 0x79, 0x17 } };
 
-HRESULT	init				(Connection*& pConnection, WDomain*& pDomain, const wchar_t* strServerAddress, UINT16 usServerPort, const GUID& guidDomainId, UINT32 ulStorageId);
-void	uninit				(Connection*& pConnection, WDomain*& pDomain, UINT32 ulStorageId);
+HRESULT	init				(WDomain*& pDomain, const wchar_t* strServerAddress, UINT16 usServerPort, const GUID& guidDomainId, UINT32 ulStorageId);
+void	uninit				(WDomain*& pDomain, UINT32 ulStorageId);
 
 void	writeAttributes		(WSupplies* pSupplies);
 void	readAttributes		(WSupplies* pSupplies);
@@ -30,10 +30,9 @@ int wmain(int argc, wchar_t* argv[])
 	// Storage-ID (we are using the default 0 here)
 	UINT32 ulStorageId = 0;
 
-	Connection* pConnection;
 	WDomain* pDomain;
 
-	if(S_OK != init(pConnection, pDomain, strServerAddress, usServerPort, guidDomainId, ulStorageId))
+	if(S_OK != init(pDomain, strServerAddress, usServerPort, guidDomainId, ulStorageId))
 	{
 		printf("init failed\n");
 		return -1;
@@ -88,7 +87,7 @@ int wmain(int argc, wchar_t* argv[])
 						if(FAILED(pDomain->Execute(Transaction::Load, NULL)))
 						{
 							wprintf(L"Execute failed...\n");
-							uninit(pConnection, pDomain, ulStorageId);
+							uninit(pDomain, ulStorageId);
 							return -1;
 						}
 					}
@@ -146,7 +145,7 @@ int wmain(int argc, wchar_t* argv[])
 						if(FAILED(pDomain->Execute(Transaction::Load, NULL)))
 						{
 							wprintf(L"Execute failed...\n");
-							uninit(pConnection, pDomain, ulStorageId);
+							uninit(pDomain, ulStorageId);
 							return -1;
 						}
 
@@ -194,7 +193,7 @@ int wmain(int argc, wchar_t* argv[])
 						if(FAILED(pDomain->Execute(Transaction::Load, NULL)))
 						{
 							wprintf(L"Execute failed...\n");
-							uninit(pConnection, pDomain, ulStorageId);
+							uninit(pDomain, ulStorageId);
 							return -1;
 						}
 
@@ -298,7 +297,7 @@ int wmain(int argc, wchar_t* argv[])
 	if(pInventory)
 		pInventory->Release();
 
-	uninit(pConnection, pDomain, ulStorageId);
+	uninit(pDomain, ulStorageId);
 
 	return 0;
 }

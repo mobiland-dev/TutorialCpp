@@ -1,6 +1,6 @@
 #include "pch.h"
 
-HRESULT init(Connection*& pConnection, WDomain*& pDomain, const wchar_t* strServerAddress, UINT16 usServerPort, const GUID& guidDomainId, UINT32 ulStorageId)
+HRESULT init(WDomain*& pDomain, const wchar_t* strServerAddress, UINT16 usServerPort, const GUID& guidDomainId, UINT32 ulStorageId)
 {
 	HRESULT hRes;
 
@@ -8,7 +8,7 @@ HRESULT init(Connection*& pConnection, WDomain*& pDomain, const wchar_t* strServ
 	InitializeThread();
 
 	// build connection object
-	pConnection = Connection_Create();
+	Connection* pConnection = Connection_Create();
 
 	if(FAILED(hRes = pConnection->Initialize(&guidDomainId)))
 	{
